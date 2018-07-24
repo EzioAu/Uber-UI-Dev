@@ -294,8 +294,11 @@
 			end)
 			
 			
-			GameTooltip:SetBackdropBorderColor(.05, .05, .05)
-			GameTooltip.SetBackdropBorderColor = function() end
+			hooksecurefunc("GameTooltip_SetBackdropStyle", function(self, style)
+				if self then
+					self:SetBackdropBorderColor(.05, .05, .05);
+				end
+			end)
 			
 			for i,v in pairs({
 				PlayerPVPIcon,
