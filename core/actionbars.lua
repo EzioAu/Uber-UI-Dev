@@ -9,6 +9,7 @@
   local cfg = ns.cfg
 
   local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
+  local class = UnitClass("player")
   local dominos = IsAddOnLoaded("Dominos")
   local bartender4 = IsAddOnLoaded("Bartender4")
 
@@ -44,35 +45,36 @@
 		return
 	end
 
-  local function applyBackground(bu)
-    if not bu or (bu and bu.bg) then return end
-    --shadows+background
-    if bu:GetFrameLevel() < 1 then bu:SetFrameLevel(1) end
-    if cfg.background.showbg or cfg.background.showshadow then
-      bu.bg = CreateFrame("Frame", nil, bu)
-     -- bu.bg:SetAllPoints(bu)
-      bu.bg:SetPoint("TOPLEFT", bu, "TOPLEFT", -4, 4)
-      bu.bg:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", 4, -4)
-      bu.bg:SetFrameLevel(bu:GetFrameLevel()-1)
-      if cfg.background.classcolored then
-        cfg.background.backgroundcolor = classcolor
-        cfg.background.shadowcolor = classcolor
-      end
-      if cfg.background.showbg and not cfg.background.useflatbackground then
-        local t = bu.bg:CreateTexture(nil,"BACKGROUND",-8)
-        t:SetTexture(cfg.textures.buttonback)
-        --t:SetAllPoints(bu)
-        t:SetVertexColor(cfg.background.backgroundcolor.r,cfg.background.backgroundcolor.g,cfg.background.backgroundcolor.b,cfg.background.backgroundcolor.a)
-      end
-      bu.bg:SetBackdrop(backdrop)
-      if cfg.background.useflatbackground then
-        bu.bg:SetBackdropColor(cfg.background.backgroundcolor.r,cfg.background.backgroundcolor.g,cfg.background.backgroundcolor.b,cfg.background.backgroundcolor.a)
-      end
-      if cfg.background.showshadow then
-        bu.bg:SetBackdropBorderColor(cfg.background.shadowcolor.r,cfg.background.shadowcolor.g,cfg.background.shadowcolor.b,cfg.background.shadowcolor.a)
-      end
+ local function applyBackground(bu)
+   if not bu or (bu and bu.bg) then return end
+   --shadows+background
+   if bu:GetFrameLevel() < 1 then bu:SetFrameLevel(1) end
+   if cfg.background.showbg or cfg.background.showshadow then
+     bu.bg = CreateFrame("Frame", nil, bu)
+    -- bu.bg:SetAllPoints(bu)
+     bu.bg:SetPoint("TOPLEFT", bu, "TOPLEFT", -4, 4)
+     bu.bg:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", 4, -4)
+     bu.bg:SetFrameLevel(bu:GetFrameLevel()-1)
+     if cfg.background.classcolored then
+       cfg.background.backgroundcolor = classcolor
+       cfg.background.shadowcolor = classcolor
+     end
+     if cfg.background.showbg and not cfg.background.useflatbackground then
+       local t = bu.bg:CreateTexture(nil,"BACKGROUND",-8)
+       t:SetTexture(cfg.textures.buttonback)
+       --t:SetAllPoints(bu)
+       t:SetVertexColor(cfg.background.backgroundcolor.r,cfg.background.backgroundcolor.g,cfg.background.backgroundcolor.b,cfg.background.backgroundcolor.a)
+     end
+     bu.bg:SetBackdrop(backdrop)
+    if cfg.background.useflatbackground then
+      bu.bg:SetBackdropColor(cfg.background.backgroundcolor.r,cfg.background.backgroundcolor.g,cfg.background.backgroundcolor.b,cfg.background.backgroundcolor.a)
     end
-  end
+    if cfg.background.showshadow then
+      bu.bg:SetBackdropBorderColor(cfg.background.shadowcolor.r,cfg.background.shadowcolor.g,cfg.background.shadowcolor.b,cfg.background.shadowcolor.a)
+    end
+   end
+ end
+
 
   --style extraactionbutton
   local function styleExtraActionButton(bu)
@@ -145,7 +147,7 @@
     ho:ClearAllPoints()
     ho:SetPoint(cfg.hotkeys.pos1.a1,bu,cfg.hotkeys.pos1.x,cfg.hotkeys.pos1.y)
     ho:SetPoint(cfg.hotkeys.pos2.a1,bu,cfg.hotkeys.pos2.x,cfg.hotkeys.pos2.y)
-    if not dominos and not bartender4 and not cfg.hotkeys.show then
+    if not dominos and not bartender4 and not UberuiDB.Hotkey then
       ho:Hide()
     end
     --macro name
@@ -153,7 +155,7 @@
     na:ClearAllPoints()
     na:SetPoint(cfg.macroname.pos1.a1,bu,cfg.macroname.pos1.x,cfg.macroname.pos1.y)
     na:SetPoint(cfg.macroname.pos2.a1,bu,cfg.macroname.pos2.x,cfg.macroname.pos2.y)
-    if not dominos and not bartender4 and not cfg.macroname.show then
+    if not dominos and not bartender4 and not UberuiDB.Macroname then
       na:Hide()
     end
     --item stack count
@@ -365,7 +367,7 @@ end
   --update hotkey func
   local function updateHotkey(self, actionButtonType)
     local ho = _G[self:GetName().."HotKey"]
-    if ho and not cfg.hotkeys.show and ho:IsShown() then
+    if ho and not UberuiDB.Hotkey and ho:IsShown() then
       ho:Hide()
     end
   end

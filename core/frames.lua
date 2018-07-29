@@ -1,8 +1,15 @@
+  ---------------------------------------
+  -- VARIABLES
+  ---------------------------------------
+
   --get the addon namespace
   local addon, ns = ...
   --get the config values
   local cfg = ns.cfg
   local dragFrameList = ns.dragFrameList
+
+  local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
+  local class = UnitClass("player")
 
   ---------------------------------------
   -- ACTIONS
@@ -160,13 +167,13 @@
 			self.manabar.RightText:Hide();
 			forceNormalTexture = true;
 		elseif ( classification == "worldboss" or classification == "elite" ) then
-			self.borderTexture:SetTexture("Interface\\AddOns\\Lorti UI\\textures\\target\\elite")
+			self.borderTexture:SetTexture("Interface\\AddOns\\Uber UI\\textures\\target\\elite")
 			self.borderTexture:SetVertexColor(1, 1, 1)
 		elseif ( classification == "rareelite" ) then
-			self.borderTexture:SetTexture("Interface\\AddOns\\Lorti UI\\textures\\target\\rare-elite")
+			self.borderTexture:SetTexture("Interface\\AddOns\\Uber UI\\textures\\target\\rare-elite")
 			self.borderTexture:SetVertexColor(1, 1, 1)
 		elseif ( classification == "rare" ) then
-			self.borderTexture:SetTexture("Interface\\AddOns\\Lorti UI\\textures\\target\\rare")
+			self.borderTexture:SetTexture("Interface\\AddOns\\Uber UI\\textures\\target\\rare")
 			self.borderTexture:SetVertexColor(1, 1, 1)
 		else
 			self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
@@ -283,7 +290,7 @@
 					region:SetVertexColor(.05, .05, .05)
 				end
 			end
-			CompactRaidFrameManagerToggleButton:SetNormalTexture("Interface\\AddOns\\Lorti UI\\textures\\raid\\RaidPanel-Toggle")
+			CompactRaidFrameManagerToggleButton:SetNormalTexture("Interface\\AddOns\\Uber UI\\textures\\raid\\RaidPanel-Toggle")
 			
 			hooksecurefunc("GameTooltip_ShowCompareItem", function(self, anchorFrame)
 				if self then
@@ -293,12 +300,13 @@
 				end
 			end)
 			
-			
 			hooksecurefunc("GameTooltip_SetBackdropStyle", function(self, style)
 				if self then
 					self:SetBackdropBorderColor(.05, .05, .05);
 				end
 			end)
+			--GameTooltip:SetBackdropBorderColor(.05, .05, .05)
+			--GameTooltip.SetBackdropBorderColor = function() end
 			
 			for i,v in pairs({
 				PlayerPVPIcon,
@@ -331,27 +339,45 @@
 	end)
    
  -- COLORING THE MAIN BAR
-	for i,v in pairs({
-		MainMenuBarArtFrameBackground.BackgroundLarge,
-		MainMenuBarArtFrameBackground.BackgroundSmall,
-		SlidingActionBarTexture0,
-		SlidingActionBarTexture1,
-		StatusTrackingBarManager.SingleBarLarge,
-		StatusTrackingBarManager.SingleBarLargeUpper,
-		StatusTrackingBarManager.SingleBarSmall,
-		StatusTrackingBarManager.SingleBarSmallUpper,
-		MicroButtonAndBagsBar.MicroBagBar,
-	}) do
-		v:SetVertexColor(.2, .2, .2)
-  
-	end
-    for i,v in pairs({
-		MainMenuBarArtFrame.LeftEndCap,
-        MainMenuBarArtFrame.RightEndCap, 
-	}) do
-        v:SetVertexColor(.35, .35, .35)
-	end 
-
+ 	local CF=CreateFrame("Frame")
+ 	CF:RegisterEvent("PLAYER_LOGIN")
+ 	CF:SetScript("OnEvent", function(self, event)
+		for i,v in pairs({
+			MainMenuBarArtFrameBackground.BackgroundLarge,
+			MainMenuBarArtFrameBackground.BackgroundSmall,
+			SlidingActionBarTexture0,
+			SlidingActionBarTexture1,
+			StatusTrackingBarManager.SingleBarLarge,
+			StatusTrackingBarManager.SingleBarLargeUpper,
+			StatusTrackingBarManager.SingleBarSmall,
+			StatusTrackingBarManager.SingleBarSmallUpper,
+			MicroButtonAndBagsBar.MicroBagBar,
+		}) do
+			v:SetVertexColor(.2, .2, .2)
+  	
+		end
+	
+		--if UberuiDB.Gryphon and UberuiDB.Classcolor then
+		--	MainMenuBarArtFrame.LeftEndCap:SetTexture("Interface\\AddOns\\Uber UI\\textures\\classtextures\\"..class.."\\mainmenubar-endcap-dwarf")
+		--	MainMenuBarArtFrame.LeftEndCap:SetVertexColor(1, 1, 1)
+		--	MainMenuBarArtFrame.LeftEndCap:SetTexCoord(0,1,.40625,1)
+		--	MainMenuBarArtFrame.RightEndCap:SetTexture("Interface\\AddOns\\Uber UI\\textures\\classtextures\\"..class.."\\mainmenubar-endcap-dwarf")
+		--	MainMenuBarArtFrame.RightEndCap:SetVertexColor(1, 1, 1)
+		--	MainMenuBarArtFrame.RightEndCap:SetTexCoord(1,0,.40625,1)
+		--else
+    		for i,v in ipairs({
+				MainMenuBarArtFrame.LeftEndCap,
+    		    MainMenuBarArtFrame.RightEndCap, 
+			}) do
+				if UberuiDB.Gryphon then
+					v:SetVertexColor(.35, .35, .35)
+				else
+    		    	v:Hide()
+    		    end
+    	 	end
+    	--end
+	end)
+	
  -- COLORING ARENA FRAMES
 	local CF = CreateFrame("Frame")
 	local _, instanceType = IsInInstance()
@@ -392,7 +418,7 @@
 				ArenaPrepFrame4SpecBorder,
 				ArenaPrepFrame5SpecBorder,
 			}) do
-                		v:SetVertexColor(.05, .05, .05)
+                	v:SetVertexColor(.05, .05, .05)
 	      		end 		
 		end 
 	end)

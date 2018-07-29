@@ -1,0 +1,10 @@
+## Interface: 80000
+## Version: 8.0.1.1
+
+## Author: lorti, Uberlicious
+## Notes: Darkens and modifies original Blizzard UI.
+## Title: Uber UI
+## Notes: Darkens the default UI
+## SavedVariables: UberuiDB
+
+config.lua

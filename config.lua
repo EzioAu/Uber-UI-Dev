@@ -1,33 +1,47 @@
-﻿
-  -- // Lorti UI
-  -- // Lorti - 2016
 
-  -----------------------------
-  -- INIT
-  -----------------------------
+-- // Uber UI
+-- // Uberlicious - 2018
 
-  --get the addon namespace
-  local addon, ns = ...
+-----------------------------
+-- INIT
+-----------------------------
 
-  --generate a holder for the config data
-  local cfg = CreateFrame("Frame")
+--get the addon namespace
+local addon, ns = ...
+local db
+
+-----------------------------
+-- DEFAULTS
+-----------------------------
+
+--generate a holder for the config data
+local Uberui = CreateFrame("Frame")
+Uberui:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
+Uberui:RegisterEvent("PLAYER_LOGIN")
+Uberui:RegisterEvent("PLAYER_LOGOUT")
 
   -----------------------------
   -- CONFIG
   -----------------------------
 
--- action bars settings
+defaults = {
+  general = {
+    gryphon           = true,
+    classcolor        = false,
+  }
+}
 
+-- action bars settings
   cfg.textures = {
-    normal            = "Interface\\AddOns\\Lorti UI\\textures\\gloss",
-    flash             = "Interface\\AddOns\\Lorti UI\\textures\\flash",
-    hover             = "Interface\\AddOns\\Lorti UI\\textures\\hover",
-    pushed            = "Interface\\AddOns\\Lorti UI\\textures\\pushed",
-    checked           = "Interface\\AddOns\\Lorti UI\\textures\\checked",
-    equipped          = "Interface\\AddOns\\Lorti UI\\textures\\gloss_grey",
-    buttonback        = "Interface\\AddOns\\Lorti UI\\textures\\button_background",
-    buttonbackflat    = "Interface\\AddOns\\Lorti UI\\textures\\button_background_flat",
-    outer_shadow      = "Interface\\AddOns\\Lorti UI\\textures\\outer_shadow",
+    normal            = "Interface\\AddOns\\Uber UI\\textures\\gloss",
+    flash             = "Interface\\AddOns\\Uber UI\\textures\\flash",
+    hover             = "Interface\\AddOns\\Uber UI\\textures\\hover",
+    pushed            = "Interface\\AddOns\\Uber UI\\textures\\pushed",
+    checked           = "Interface\\AddOns\\Uber UI\\textures\\checked",
+    equipped          = "Interface\\AddOns\\Uber UI\\textures\\gloss_grey",
+    buttonback        = "Interface\\AddOns\\Uber UI\\textures\\button_background",
+    buttonbackflat    = "Interface\\AddOns\\Uber UI\\textures\\button_background_flat",
+    outer_shadow      = "Interface\\AddOns\\Uber UI\\textures\\outer_shadow",
   }
 
   cfg.background = {
@@ -98,13 +112,13 @@
       padding           = -2,
     },
     border = {
-      texture           = "Interface\\AddOns\\Lorti UI\\textures\\gloss",
+      texture           = "Interface\\AddOns\\Uber UI\\textures\\gloss",
       color             = { r = 0.4, g = 0.35, b = 0.35, },
       classcolored      = false,
     },
     background = {
       show              = true,   --show backdrop
-      edgeFile          = "Interface\\AddOns\\Lorti UI\\textures\\outer_shadow",
+      edgeFile          = "Interface\\AddOns\\Uber UI\\textures\\outer_shadow",
       color             = { r = 0, g = 0, b = 0, a = 0.9},
       classcolored      = false,
       inset             = 6,
@@ -137,13 +151,13 @@
       padding           = -2,
     },
     border = {
-      texture           = "Interface\\AddOns\\Lorti UI\\textures\\gloss",
+      texture           = "Interface\\AddOns\\Uber UI\\textures\\gloss",
       color             = { r = 0.4, g = 0.35, b = 0.35, },
       classcolored      = false,
     },
     background = {
       show              = true,   --show backdrop
-      edgeFile          = "Interface\\AddOns\\Lorti UI\\textures\\outer_shadow",
+      edgeFile          = "Interface\\AddOns\\Uber UI\\textures\\outer_shadow",
       color             = { r = 0, g = 0, b = 0, a = 0.9},
       classcolored      = false,
       inset             = 6,
@@ -161,9 +175,75 @@
     },
   }
 
+
+function Uberui:PLAYER_LOGIN()
+    -- remove old table structure if exists
+  local function removeoldDB(save)
+    for k,v in pairs(save) do
+      if type(v) ~= "table" then do
+        save[k] = nil
+        print("save")
+      end
+    end
+  end
+  removeoldDB(UberuiDB)
+
+  local function initDB(defaults, tbl, save)
+    if type(defaults) ~= "table" then return {} end
+    if type(tbl) ~= "table" then return tbl = {} end
+    for k, v in pairs(defaults) do
+      if type(v) == "table" then
+        tbl[k] = initDB(v, tbl[k])
+      elseif type(b[k]) ~= type(v) then
+        if v ~= save[k]
+          tbl[k] = save[k]
+        else
+          tbl[k] = v
+        end
+      end
+    end
+    return tbl
+  end
+  db = initDB(defaults, tbl, UberuiDB)
+  self:UnregisterEvent("PLAYER_LOGIN")
+end
+
+function Uberui:PLAYER_LOGOUT()
+  local function saveDB(db, defaults, save)
+    if type(db) ~= "table" then return {} end
+    if type(save) ~= "table" then return save = {} end
+    if type(defaults) ~= "table" then return {} end
+    for k, v in pairs(db) do
+      if type(v) == "table" then
+        db[k] = saveDB(v, db[k])
+      elseif type(b[k]) ~= type(v) then
+        if db[k] ~= defaults[k]
+          save[k] = v
+        end
+      end
+    end
+  end
+  saveDB(db, defaults, UberuiDB)
+end
+
+  -----------------------------
+  -- SLASH COMMAND
+  -----------------------------
+
+SlashCmdList.UBERUI = function(msg)
+    msg = msg:lower()
+    if msg == "options" then
+      ns.ShowOptions()
+    else
+      InterfaceOptionsFrame_OpenToCategory(addon)
+      InterfaceOptionsFrame_OpenToCategory(addon)
+    end
+end
+SLASH_UBERUI1 = "/uui"
+
   -----------------------------
   -- HANDOVER
   -----------------------------
 
-  --hand the config to the namespace for usage in other lua files (remember: those lua files must be called after the cfg.lua)
+  --hand the config to the namespace for usage in other lua files (remember: those lua files must be called after the Uberui.lua)
   ns.cfg = cfg
