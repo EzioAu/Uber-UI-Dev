@@ -6,6 +6,8 @@
 
 local addon, ns = ...
 
+local opt
+
 local SOUND_OFF = SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 local SOUND_ON = SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 
@@ -13,7 +15,7 @@ local Options = CreateFrame("Frame", "LortiUI-DevOptions", InterfaceOptionsFrame
 Options.name = GetAddOnMetadata(addon, "Title") or addon
 InterfaceOptions_AddCategory(Options)
 
-function ns.ShowOptions()
+function opt.ShowOptions()
 	InterfaceOptionsFrame_OpenToCategory(Options)
 end
 
