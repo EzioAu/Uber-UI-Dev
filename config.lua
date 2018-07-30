@@ -197,8 +197,11 @@ function Uberui:ADDON_LOADED()
     --if type(save) ~= "table" then return {} end
     for k, v in pairs(def) do
       if type(v) == "table" then
-        tbl[k] = initDB(v, tbl[k])
+        tbl[k] = initDB(v, tbl[k], save[k])
       elseif type(tbl[k]) ~= type(v) then
+	  print(type(tbl[k))
+	  print(type(v))
+	  print(type(save[k])
         --if type(save[k]) == type(v) and v ~= save[k] then
         --  tbl[k] = save[k]
         --else
